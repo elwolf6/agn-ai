@@ -14,6 +14,7 @@ const Message: Component<{
   chat: AppSchema.Chat
   char: AppSchema.Character
   last?: boolean
+  loading?: boolean
   onRemove: () => void
 }> = (props) => {
   const user = userStore()
@@ -35,6 +36,7 @@ const Message: Component<{
           char={props.char}
           onRemove={props.onRemove}
           last={props.last && i() === splits().length - 1}
+          loading={props.loading}
         />
       )}
     </For>
@@ -46,6 +48,7 @@ const SingleMessage: Component<{
   chat: AppSchema.Chat
   char: AppSchema.Character
   last?: boolean
+  loading?: boolean
   onRemove: () => void
 }> = (props) => {
   const user = userStore()
@@ -157,6 +160,11 @@ const SingleMessage: Component<{
                 parseMessage(props.msg.msg, props.char!, user.profile!)
               )}
             />
+          </Show>
+          <Show when={!edit() && props.loading}>
+            <div class="flex pl-4 py-2">
+              <div class="dot-flashing bg-[var(--hl-700)]"></div>
+            </div>
           </Show>
           <Show when={edit()}>
             <div ref={ref} contentEditable={true}>

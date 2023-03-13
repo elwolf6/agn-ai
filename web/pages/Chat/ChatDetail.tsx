@@ -112,9 +112,13 @@ const ChatDetail: Component = () => {
                   />
                 </Show>
                 <Show when={msgs.waiting}>
-                  <div class="flex justify-center">
-                    <div class="dot-flashing bg-[var(--hl-700)]"></div>
-                  </div>
+                  <Message
+                    msg={emptyMsg(chats.char?._id!, msgs.partial!)}
+                    char={chats.char!}
+                    chat={chats.chat!}
+                    onRemove={() => {}}
+                    loading={true}
+                  />
                 </Show>
               </div>
             </div>
