@@ -124,22 +124,22 @@ const SingleMessage: Component<{
             <div class="mr-4 flex items-center gap-2 text-sm">
               <Show when={props.last && props.msg.characterId}>
                 <RefreshCw
-                  size={16}
+                  size={20}
                   class="cursor-pointer text-white/20 hover:text-white"
                   onClick={retryMessage}
                 />
               </Show>
               <Show when={props.last && !props.msg.characterId}>
-                <RefreshCw size={16} class="cursor-pointer" onClick={resendMessage} />
+                <RefreshCw size={20} class="cursor-pointer" onClick={resendMessage} />
               </Show>
               <Show when={!props.msg.split}>
                 <Pencil
-                  size={16}
+                  size={20}
                   class="cursor-pointer text-white/20 hover:text-white"
                   onClick={startEdit}
                 />
                 <Trash
-                  size={16}
+                  size={20}
                   class="cursor-pointer text-white/20 hover:text-white"
                   onClick={props.onRemove}
                 />
@@ -148,8 +148,8 @@ const SingleMessage: Component<{
           </Show>
           <Show when={edit()}>
             <div class="mr-4 flex items-center gap-2 text-sm">
-              <X size={16} class="cursor-pointer text-red-500" onClick={cancelEdit} />
-              <Check size={16} class="cursor-pointer text-green-500" onClick={saveEdit} />
+              <X size={20} class="cursor-pointer text-red-500" onClick={cancelEdit} />
+              <Check size={20} class="cursor-pointer text-green-500" onClick={saveEdit} />
             </div>
           </Show>
         </div>
