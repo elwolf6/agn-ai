@@ -1,4 +1,4 @@
-import { Check, Pencil, RefreshCw, ThumbsDown, ThumbsUp, Trash, X } from 'lucide-solid'
+import { Check, Pencil, RefreshCw, ThumbsDown, ThumbsUp, Trash, X, ChevronLeft, ChevronRight } from 'lucide-solid'
 import showdown from 'showdown'
 import { Component, createMemo, createSignal, For, Show } from 'solid-js'
 import { BOT_REPLACE, SELF_REPLACE } from '../../../../common/prompt'
@@ -75,6 +75,14 @@ const SingleMessage: Component<{
     msgStore.retry(props.msg.chatId)
   }
 
+  const swipeLeft = () => {
+    console.log("LEFT");
+  }
+
+  const swipeRight = () => {
+    console.log("RIGHT");
+  }
+  
   const startEdit = () => {
     if (ref) {
       ref.innerText = props.msg.msg
@@ -88,7 +96,7 @@ const SingleMessage: Component<{
 
   return (
     <div
-      class="flex w-full gap-4 rounded-l-md hover:bg-[var(--bg-800)]"
+      class="flex w-full gap-2 rounded-l-md hover:bg-[var(--bg-800)]"
       data-sender={props.msg.characterId ? 'bot' : 'user'}
       data-bot={props.msg.characterId ? props.char?.name : ''}
     >
@@ -100,7 +108,17 @@ const SingleMessage: Component<{
           <AvatarIcon avatarUrl={members[props.msg.userId!]?.avatar} />
         </Show>
       </div>
-
+      <Show when={props.last && !edit()}>
+        <div class="m-auto cursor-pointer">
+          <ChevronLeft 
+            size={18}
+            onClick={swipeLeft}
+          />
+        </div>
+      </Show>
+      <Show when={!props.last || edit()}>
+        <div class="mx-2"></div>
+      </Show>
       <div class="flex w-full select-text flex-col">
         <div class="flex w-full flex-row justify-between">
           <div class="flex flex-row">
@@ -114,26 +132,52 @@ const SingleMessage: Component<{
               }).format(new Date(props.msg.createdAt))}
             </span>
           </div>
-          <Show when={!edit() && user.user?._id === props.chat?.userId}>
-            <div class="mr-4 flex items-center gap-2 text-sm">
+          <Show when={!edit() && user.user?._id === props.chat?.userId && !props.last}>
+            <div class="mr-8 flex items-center gap-2 text-sm">
               <Show when={props.last && props.msg.characterId}>
                 <RefreshCw
-                  size={20}
+                  size={18}
                   class="cursor-pointer text-white/20 hover:text-white"
                   onClick={retryMessage}
                 />
               </Show>
               <Show when={props.last && !props.msg.characterId}>
-                <RefreshCw size={20} class="cursor-pointer" onClick={resendMessage} />
+                <RefreshCw size={18} class="cursor-pointer" onClick={resendMessage} />
               </Show>
               <Show when={!props.msg.split}>
                 <Pencil
-                  size={20}
+                  size={18}
                   class="cursor-pointer text-white/20 hover:text-white"
                   onClick={startEdit}
                 />
                 <Trash
-                  size={20}
+                  size={18}
+                  class="cursor-pointer text-white/20 hover:text-white"
+                  onClick={props.onRemove}
+                />
+              </Show>
+            </div>
+          </Show>
+          <Show when={!edit() && user.user?._id === props.chat?.userId && props.last}>
+            <div class=" -mx-2 flex items-center gap-2 text-sm">
+              <Show when={props.last && props.msg.characterId}>
+                <RefreshCw
+                  size={18}
+                  class="cursor-pointer text-white/20 hover:text-white"
+                  onClick={retryMessage}
+                />
+              </Show>
+              <Show when={props.last && !props.msg.characterId}>
+                <RefreshCw size={18} class="cursor-pointer" onClick={resendMessage} />
+              </Show>
+              <Show when={!props.msg.split}>
+                <Pencil
+                  size={18}
+                  class="cursor-pointer text-white/20 hover:text-white"
+                  onClick={startEdit}
+                />
+                <Trash
+                  size={18}
                   class="cursor-pointer text-white/20 hover:text-white"
                   onClick={props.onRemove}
                 />
@@ -141,7 +185,7 @@ const SingleMessage: Component<{
             </div>
           </Show>
           <Show when={edit()}>
-            <div class="cursor-pointer text-white/20 hover:text-white">
+            <div class="mr-6 cursor-pointer text-white/20 hover:text-white flex gap-4">
               <X size={20} class="cursor-pointer text-red-500" onClick={cancelEdit} />
               <Check size={20} class="cursor-pointer text-green-500" onClick={saveEdit} />
             </div>
@@ -155,12 +199,6 @@ const SingleMessage: Component<{
               )}
             />
           </Show>
-          <Show when={props.msg.characterId && user.user?._id === props.chat?.userId && false}>
-              <div class="flex flex-row items-center text-white/20 gap-2">
-                <ThumbsUp size={20} class="cursor-pointer hover:text-white" />
-                <ThumbsDown size={20} class="cursor-pointer hover:text-white" />
-              </div>
-          </Show>
           <Show when={!edit() && props.loading}>
             <div class="flex pl-4 py-2">
               <div class="dot-flashing bg-[var(--hl-700)]"></div>
@@ -171,8 +209,23 @@ const SingleMessage: Component<{
               {props.msg.msg}
             </div>
           </Show>
+          {/* <Show when={props.msg.characterId && user.user?._id === props.chat?.userId && false}> */}
+          <Show when={props.msg.characterId}>
+              <div class="flex flex-row items-center py-2 text-white/20 gap-2">
+                <ThumbsUp size={18} class="cursor-pointer hover:text-white" />
+                <ThumbsDown size={18} class="cursor-pointer hover:text-white" />
+              </div>
+          </Show>
         </div>
       </div>
+      <Show when={props.last && !edit()}>
+        <div class="m-auto pr-4 cursor-pointer">
+          <ChevronRight
+            size={18}
+            onClick={swipeRight}
+          />
+        </div>
+      </Show>
     </div>
   )
 }
