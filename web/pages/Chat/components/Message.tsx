@@ -113,12 +113,6 @@ const SingleMessage: Component<{
                 timeStyle: 'short',
               }).format(new Date(props.msg.createdAt))}
             </span>
-            <Show when={props.msg.characterId && user.user?._id === props.chat?.userId && false}>
-              <div class="ml-2 flex flex-row items-center gap-2 text-white/10">
-                <ThumbsUp size={14} class="mt-[-0.15rem] cursor-pointer hover:text-white" />
-                <ThumbsDown size={14} class="cursor-pointer hover:text-white" />
-              </div>
-            </Show>
           </div>
           <Show when={!edit() && user.user?._id === props.chat?.userId}>
             <div class="mr-4 flex items-center gap-2 text-sm">
@@ -147,7 +141,7 @@ const SingleMessage: Component<{
             </div>
           </Show>
           <Show when={edit()}>
-            <div class="mr-4 flex items-center gap-2 text-sm">
+            <div class="cursor-pointer text-white/20 hover:text-white">
               <X size={20} class="cursor-pointer text-red-500" onClick={cancelEdit} />
               <Check size={20} class="cursor-pointer text-green-500" onClick={saveEdit} />
             </div>
@@ -160,6 +154,12 @@ const SingleMessage: Component<{
                 parseMessage(props.msg.msg, props.char!, user.profile!)
               )}
             />
+          </Show>
+          <Show when={props.msg.characterId && user.user?._id === props.chat?.userId && false}>
+              <div class="flex flex-row items-center text-white/20 gap-2">
+                <ThumbsUp size={20} class="cursor-pointer hover:text-white" />
+                <ThumbsDown size={20} class="cursor-pointer hover:text-white" />
+              </div>
           </Show>
           <Show when={!edit() && props.loading}>
             <div class="flex pl-4 py-2">
