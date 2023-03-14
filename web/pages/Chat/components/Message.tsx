@@ -82,7 +82,7 @@ const SingleMessage: Component<{
   const swipeRight = () => {
     console.log("RIGHT");
   }
-  
+
   const startEdit = () => {
     if (ref) {
       ref.innerText = props.msg.msg
@@ -108,23 +108,22 @@ const SingleMessage: Component<{
           <AvatarIcon avatarUrl={members[props.msg.userId!]?.avatar} />
         </Show>
       </div>
-      <Show when={props.last && !edit()}>
-        <div class="m-auto cursor-pointer">
-          <ChevronLeft 
-            size={18}
-            onClick={swipeLeft}
-          />
-        </div>
-      </Show>
       <Show when={!props.last || edit()}>
-        <div class="mx-2"></div>
+        <div class="mx-2.5"></div>
       </Show>
       <div class="flex w-full select-text flex-col">
         <div class="flex w-full flex-row justify-between">
           <div class="flex flex-row">
-            <b class="mr-2 text-white">
-              {props.msg.characterId ? props.char?.name! : members[props.msg.userId!]?.handle}
-            </b>
+            <Show when={!props.last}>
+              <b class="mr-2 text-white">
+                {props.msg.characterId ? props.char?.name! : members[props.msg.userId!]?.handle}
+              </b>
+            </Show>
+            <Show when={props.last}>
+              <b class="ml-7 mr-2 text-white">
+                {props.msg.characterId ? props.char?.name! : members[props.msg.userId!]?.handle}
+              </b>
+            </Show>
             <span class="text-sm text-white/25">
               {new Intl.DateTimeFormat('en-US', {
                 dateStyle: 'short',
@@ -132,34 +131,8 @@ const SingleMessage: Component<{
               }).format(new Date(props.msg.createdAt))}
             </span>
           </div>
-          <Show when={!edit() && user.user?._id === props.chat?.userId && !props.last}>
+          <Show when={!edit() && user.user?._id === props.chat?.userId}>
             <div class="mr-8 flex items-center gap-2 text-sm">
-              <Show when={props.last && props.msg.characterId}>
-                <RefreshCw
-                  size={18}
-                  class="cursor-pointer text-white/20 hover:text-white"
-                  onClick={retryMessage}
-                />
-              </Show>
-              <Show when={props.last && !props.msg.characterId}>
-                <RefreshCw size={18} class="cursor-pointer" onClick={resendMessage} />
-              </Show>
-              <Show when={!props.msg.split}>
-                <Pencil
-                  size={18}
-                  class="cursor-pointer text-white/20 hover:text-white"
-                  onClick={startEdit}
-                />
-                <Trash
-                  size={18}
-                  class="cursor-pointer text-white/20 hover:text-white"
-                  onClick={props.onRemove}
-                />
-              </Show>
-            </div>
-          </Show>
-          <Show when={!edit() && user.user?._id === props.chat?.userId && props.last}>
-            <div class=" -mx-2 flex items-center gap-2 text-sm">
               <Show when={props.last && props.msg.characterId}>
                 <RefreshCw
                   size={18}
@@ -186,14 +159,23 @@ const SingleMessage: Component<{
           </Show>
           <Show when={edit()}>
             <div class="mr-6 cursor-pointer text-white/20 hover:text-white flex gap-4">
-              <X size={20} class="cursor-pointer text-red-500" onClick={cancelEdit} />
-              <Check size={20} class="cursor-pointer text-green-500" onClick={saveEdit} />
+              <X size={18} class="cursor-pointer text-red-500" onClick={cancelEdit} />
+              <Check size={18} class="cursor-pointer text-green-500" onClick={saveEdit} />
             </div>
           </Show>
         </div>
-        <div class="break-words opacity-50">
+        <div class="break-words opacity-50 flex flex-row">
+          <Show when={props.last && !edit()}>
+            <div class="opacity-100 my-auto cursor-pointer">
+              <ChevronLeft 
+                size={28}
+                onClick={swipeLeft}
+              />
+            </div>
+          </Show>
           <Show when={!edit()}>
             <div
+              class=""
               innerHTML={showdownConverter.makeHtml(
                 parseMessage(props.msg.msg, props.char!, user.profile!)
               )}
@@ -209,23 +191,30 @@ const SingleMessage: Component<{
               {props.msg.msg}
             </div>
           </Show>
-          {/* <Show when={props.msg.characterId && user.user?._id === props.chat?.userId && false}> */}
-          <Show when={props.msg.characterId}>
+          <Show when={props.last && !edit()}>
+            <div class="opacity-100 mr-7 my-auto cursor-pointer">
+              <ChevronRight
+                size={28}
+                onClick={swipeRight}
+              />
+            </div>
+          </Show>
+        </div>
+          {/* <Show when={props.msg.characterId && !props.last && user.user?._id === props.chat?.userId && false}> */}
+          <Show when={props.msg.characterId && !props.last}>
               <div class="flex flex-row items-center py-2 text-white/20 gap-2">
                 <ThumbsUp size={18} class="cursor-pointer hover:text-white" />
                 <ThumbsDown size={18} class="cursor-pointer hover:text-white" />
               </div>
           </Show>
-        </div>
+          {/* <Show when={props.msg.characterId && props.last && user.user?._id === props.chat?.userId && false}> */}
+          <Show when={props.msg.characterId && props.last}>
+              <div class="ml-7 flex flex-row items-center py-2 text-white/20 gap-2">
+                <ThumbsUp size={18} class="cursor-pointer hover:text-white" />
+                <ThumbsDown size={18} class="cursor-pointer hover:text-white" />
+              </div>
+          </Show>
       </div>
-      <Show when={props.last && !edit()}>
-        <div class="m-auto pr-4 cursor-pointer">
-          <ChevronRight
-            size={18}
-            onClick={swipeRight}
-          />
-        </div>
-      </Show>
     </div>
   )
 }
