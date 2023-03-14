@@ -195,8 +195,7 @@ const SingleMessage: Component<{
             </div>
           </Show>
         </div>
-          {/* <Show when={props.msg.characterId && user.user?._id === props.chat?.userId && false}> */}
-          <Show when={props.msg.characterId}>
+          <Show when={props.msg.characterId && user.user?._id === props.chat?.userId && false}>
               <div class="ml-7 flex flex-row items-center py-2 text-white/20 gap-2">
                 <ThumbsUp size={18} class="cursor-pointer hover:text-white" />
                 <ThumbsDown size={18} class="cursor-pointer hover:text-white" />
