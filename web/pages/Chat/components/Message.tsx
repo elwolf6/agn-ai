@@ -52,10 +52,11 @@ const SingleMessage: Component<{
   onRemove: () => void
 }> = (props) => {
   const user = userStore()
-  const members = chatStore((s) => s.memberIds)
+  const chat = chatStore()
+  const members = chat.memberIds
 
   const [edit, setEdit] = createSignal(false)
-
+  
   const cancelEdit = () => {
     setEdit(false)
   }
@@ -108,22 +109,12 @@ const SingleMessage: Component<{
           <AvatarIcon avatarUrl={members[props.msg.userId!]?.avatar} />
         </Show>
       </div>
-      <Show when={!props.last || edit()}>
-        <div class="mx-2.5"></div>
-      </Show>
       <div class="flex w-full select-text flex-col">
         <div class="flex w-full flex-row justify-between">
           <div class="flex flex-row">
-            <Show when={!props.last}>
-              <b class="mr-2 text-white">
+              <b class="mr-2 ml-7 text-white">
                 {props.msg.characterId ? props.char?.name! : members[props.msg.userId!]?.handle}
               </b>
-            </Show>
-            <Show when={props.last}>
-              <b class="ml-7 mr-2 text-white">
-                {props.msg.characterId ? props.char?.name! : members[props.msg.userId!]?.handle}
-              </b>
-            </Show>
             <span class="text-sm text-white/25">
               {new Intl.DateTimeFormat('en-US', {
                 dateStyle: 'short',
@@ -165,7 +156,7 @@ const SingleMessage: Component<{
           </Show>
         </div>
         <div class="break-words opacity-50 flex flex-row">
-          <Show when={props.last && !edit()}>
+          <Show when={!props.loading && props.last && !edit() && document.getElementsByClassName('dot-flashing').length === 0}>
             <div class="opacity-100 my-auto cursor-pointer">
               <ChevronLeft 
                 size={28}
@@ -173,9 +164,12 @@ const SingleMessage: Component<{
               />
             </div>
           </Show>
+          <Show when={!props.last || (props.last && edit()) || document.getElementsByClassName('dot-flashing').length !== 0}>
+            <div class="ml-7">
+            </div>
+          </Show>
           <Show when={!edit()}>
             <div
-              class=""
               innerHTML={showdownConverter.makeHtml(
                 parseMessage(props.msg.msg, props.char!, user.profile!)
               )}
@@ -191,8 +185,8 @@ const SingleMessage: Component<{
               {props.msg.msg}
             </div>
           </Show>
-          <Show when={props.last && !edit()}>
-            <div class="opacity-100 mr-7 my-auto cursor-pointer">
+          <Show when={!props.loading && props.last && !edit() && document.getElementsByClassName('dot-flashing').length === 0}>
+            <div class="opacity-100 ml-auto mr-6 my-auto cursor-pointer">
               <ChevronRight
                 size={28}
                 onClick={swipeRight}
@@ -200,15 +194,8 @@ const SingleMessage: Component<{
             </div>
           </Show>
         </div>
-          {/* <Show when={props.msg.characterId && !props.last && user.user?._id === props.chat?.userId && false}> */}
-          <Show when={props.msg.characterId && !props.last}>
-              <div class="flex flex-row items-center py-2 text-white/20 gap-2">
-                <ThumbsUp size={18} class="cursor-pointer hover:text-white" />
-                <ThumbsDown size={18} class="cursor-pointer hover:text-white" />
-              </div>
-          </Show>
-          {/* <Show when={props.msg.characterId && props.last && user.user?._id === props.chat?.userId && false}> */}
-          <Show when={props.msg.characterId && props.last}>
+          {/* <Show when={props.msg.characterId && user.user?._id === props.chat?.userId && false}> */}
+          <Show when={props.msg.characterId}>
               <div class="ml-7 flex flex-row items-center py-2 text-white/20 gap-2">
                 <ThumbsUp size={18} class="cursor-pointer hover:text-white" />
                 <ThumbsDown size={18} class="cursor-pointer hover:text-white" />
