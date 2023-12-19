@@ -78,6 +78,10 @@ export const userStore = createStore<UserState>(
       userStore.syncPatreonAccount(true)
     }
 
+    if (init.user.billing) {
+      userStore.validateSubscription(true)
+    }
+
     if (init.user?._id !== 'anon') {
       userStore.getTiers()
     }
@@ -218,11 +222,17 @@ export const userStore = createStore<UserState>(
       }
     },
 
-    async *validateSubscription({ billingLoading }) {
+    async *validateSubscription({ billingLoading }, quiet?: boolean) {
       if (billingLoading) return
       yield { billingLoading: true }
       const res = await api.post('/admin/billing/subscribe/verify')
       yield { billingLoading: false }
+
+      if (res.result) {
+        yield { user: res.result }
+      }
+
+      if (quiet) return
       if (res.result) {
         toastStore.success('You are currently subscribed')
       }
@@ -343,13 +353,18 @@ export const userStore = createStore<UserState>(
       }
     },
 
-    async syncPatreonAccount(_, quiet?: boolean) {
+    async *syncPatreonAccount(_, quiet?: boolean) {
       const res = await api.post('/user/resync/patreon')
+
+      if (res.result) {
+        yield { user: res.result }
+      }
+
       if (quiet) return
 
       if (res.result) {
         toastStore.success('Successfully updated Patreon information')
-        return
+        return { user: res.result }
       }
 
       if (res.error) {
